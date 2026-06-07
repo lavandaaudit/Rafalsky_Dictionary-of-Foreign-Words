@@ -199,6 +199,12 @@ async function init() {
   DOM.intervalRange.oninput = () => { state.autoDelay = parseInt(DOM.intervalRange.value); DOM.intervalVal.textContent = state.autoDelay + 'с'; if (state.autoMode) resetProgress(); };
   DOM.toggleFont.onchange = () => { state.fixedFont = DOM.toggleFont.checked; };
   
+  document.querySelector('.word-stage').onclick = (e) => {
+    if (!e.target.closest('button') && !e.target.closest('.settings-panel')) {
+      nextWord();
+    }
+  };
+  
   document.onkeydown = (e) => { if (e.key === 'ArrowRight' || e.key === ' ') nextWord(); if (e.key === 'ArrowLeft') prevWord(); };
   
   // INITIAL SHOW
