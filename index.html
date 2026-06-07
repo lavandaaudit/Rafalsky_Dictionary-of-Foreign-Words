@@ -3,129 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Словник іншомовних слів Рафальського — інтерактивний цитатник іноземних слів з тлумаченнями">
-  <title>Словник іншомовних слів Рафальського</title>
-
-  <!-- Google Fonts: Bebas Neue for logo + calligraphic fonts -->
+  <title>Rafalsky Dictionary — Global Zen</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=IM+Fell+English:ital@0;1&family=Cormorant+Garamond:ital,wght@0,300;0,700;1,300;1,700&family=Cinzel+Decorative:wght@400;700&family=UnifrakturMaguntia&family=Marck+Script&family=Alex+Brush&family=Dancing+Script:wght@400;700&family=Almendra:ital,wght@0,400;0,700;1,400&family=Sorts+Mill+Goudy:ital@0;1&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Spectral:ital,wght@0,300;1,300&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Almendra:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IM+Fell+English:ital@0;1&family=Marck+Script&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Spectral:ital,wght@0,400;0,700;1,400&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+  
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="size-md">
 
-  <!-- HEADER -->
+  <canvas id="particle-canvas"></canvas>
+
   <header class="site-header">
     <div class="logo-block">
       <div class="logo-icon">
-        <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="26" cy="26" r="24" stroke="#c8a96e" stroke-width="1.5" stroke-dasharray="4 3"/>
-          <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="'Bebas Neue'" font-size="22" fill="#c8a96e" letter-spacing="1">СІС</text>
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="2" width="36" height="36" rx="2" stroke="#c8a96e" stroke-width="1.5"/>
+          <path d="M12 12L28 28M28 12L12 28" stroke="#c8a96e" stroke-width="1"/>
+          <circle cx="20" cy="20" r="4" fill="#080808" stroke="#c8a96e"/>
         </svg>
       </div>
       <div class="logo-text">
-        <span class="logo-line1">Словник</span>
-        <span class="logo-line2">іншомовних слів</span>
-        <span class="logo-line3">Рафальського</span>
+        <span class="logo-line1">СЛОВНИК</span>
+        <span class="logo-line2">РАФАЛЬСЬКОГО</span>
+        <span class="logo-line3">EST. 2024</span>
       </div>
     </div>
-
-    <div class="header-controls">
-      <button id="btn-random" class="ctrl-btn" title="Випадкове слово">
-        <span class="btn-icon">⟳</span>
-        <span class="btn-label">Випадкове</span>
-      </button>
-      <button id="btn-auto" class="ctrl-btn" title="Авто-зміна слів">
-        <span class="btn-icon">◉</span>
-        <span class="btn-label">Авто</span>
-      </button>
-      <button id="btn-settings" class="ctrl-btn ctrl-btn--icon" title="Налаштування">
-        <span class="btn-icon">⚙</span>
-      </button>
-    </div>
+    <!-- Buttons removed for Zen mode -->
   </header>
 
-  <!-- SETTINGS PANEL -->
-  <div id="settings-panel" class="settings-panel hidden">
-    <div class="settings-inner">
-      <h3 class="settings-title">Налаштування</h3>
-
-      <div class="setting-group">
-        <label class="setting-label">Інтервал авто-зміни</label>
-        <div class="setting-row">
-          <input type="range" id="interval-range" min="3" max="30" value="8" class="range-input">
-          <span id="interval-val" class="range-value">8с</span>
-        </div>
-      </div>
-
-      <div class="setting-group">
-        <label class="setting-label">Розмір тексту</label>
-        <div class="setting-row setting-row--buttons">
-          <button class="filter-btn" data-size="sm">Малий</button>
-          <button class="filter-btn active" data-size="md">Середній</button>
-          <button class="filter-btn" data-size="lg">Великий</button>
-        </div>
-      </div>
-
-      <div class="setting-group">
-        <label class="setting-label">Анімація переходу</label>
-        <div class="setting-row setting-row--buttons">
-          <button class="filter-btn active" data-anim="fade">Fade</button>
-          <button class="filter-btn" data-anim="slide">Slide</button>
-          <button class="filter-btn" data-anim="blur">Blur</button>
-        </div>
-      </div>
-
-      <div class="setting-group">
-        <label class="setting-label">Показувати походження</label>
-        <div class="setting-row">
-          <label class="toggle">
-            <input type="checkbox" id="toggle-etymology" checked>
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-      </div>
-
-      <div class="setting-group">
-        <label class="setting-label">Фіксований шрифт</label>
-        <div class="setting-row">
-          <label class="toggle">
-            <input type="checkbox" id="toggle-fixed-font">
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- PARTICLES BACKGROUND -->
-  <canvas id="particle-canvas"></canvas>
-
-  <!-- WORD DISPLAY -->
-  <main class="word-stage">
-    <div id="word-card" class="word-card">
-      <div class="word-origin" id="word-origin">— грецьк.</div>
-      <h1 class="word-title" id="word-title">Абракадабра</h1>
-      <p class="word-definition" id="word-definition">Безглузді, незрозумілі слова або написи; нісенітниця, нерозбериха.</p>
+  <main class="word-stage" id="main-stage">
+    <div class="word-card" id="word-card">
+      <div class="word-origin" id="word-origin">Архів завантажується...</div>
+      <h1 class="word-title" id="word-title">—</h1>
+      <div class="word-definition" id="word-definition">Будь ласка, зачекайте...</div>
+      
       <div class="word-meta">
-        <span class="word-counter" id="word-counter">001 / 120</span>
+        <div class="word-counter" id="word-counter">Global Index 200k+</div>
         <div class="progress-bar-wrap">
           <div class="progress-bar" id="progress-bar"></div>
         </div>
       </div>
     </div>
-
-    <div class="nav-hints">
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
   </main>
 
-  <!-- FOOTER -->
   <footer class="site-footer">
-    <span>Словник іншомовних слів Рафальського · 2026</span>
-    <a href="https://uk.wikipedia.org/wiki/Словник_іншомовних_слів" target="_blank" class="footer-link">lavanda.audit.soft</a>
+    <div class="footer-left">Slovnyk.me · Wikipedia · Rafalsky Edition</div>
+    <div class="footer-right">Zen Mode: Active</div>
   </footer>
 
   <script src="app.js"></script>
