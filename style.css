@@ -339,7 +339,32 @@ body {
   max-width: 680px;
   margin: 0 auto;
   font-style: italic;
-  /* font-family set dynamically */
+  min-height: 3.4em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease;
+}
+
+/* Loading state */
+.word-card.is-loading .word-title,
+.word-card.is-loading .word-definition,
+.word-card.is-loading .word-origin {
+  opacity: 0.2;
+  filter: blur(8px);
+}
+
+.word-card.is-loading::after {
+  content: '✦';
+  animation: pulseRotate 1.5s infinite ease-in-out;
+  opacity: 1;
+  filter: blur(0);
+}
+
+@keyframes pulseRotate {
+  0% { transform: scale(1) rotate(0deg); opacity: 0.5; }
+  50% { transform: scale(1.5) rotate(180deg); opacity: 1; }
+  100% { transform: scale(1) rotate(360deg); opacity: 0.5; }
 }
 
 /* Word meta: counter + progress */

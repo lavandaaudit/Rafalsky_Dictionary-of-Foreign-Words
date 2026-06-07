@@ -143,6 +143,7 @@ const CURATED_WORDS = [
 const state = {
   words:         [...CURATED_WORDS],
   filteredWords: [...CURATED_WORDS],
+  fullIndex:     [], // This will hold 100,000+ words
   currentIndex:  0,
   autoMode:      false,
   autoInterval:  null,
@@ -152,19 +153,15 @@ const state = {
   fixedFont:     false,
   sizeClass:     'md',
   activeCategory:'all',
-  activeSource:  'curated',
+  activeSource:  'all',
   lastFontIndex: -1,
   progressTimer: null,
   isAnimating:   false,
+  isLoadingData: false,
 };
 
-// Wiktionary word pool for fetchable words
-const WIKTIONARY_SEED_WORDS = [
-  'аура','балет','бюджет','візит','гала','де',
-  'екзамен','жюрі','зодіак','карма','ліміт','монтаж',
-  'нотаріус','оаза','пасія','режим','саботаж','тандем',
-  'фасад','хаос','ценз','шанс','абітурієнт',
-];
+// URL to a massive Ukrainian frequency list (approx 200k+ words)
+const GLOBAL_WORDLIST_URL = 'https://raw.githubusercontent.com/hermitdave/FrequencyWords/master/content/2016/uk/uk_full.txt';
 
 // ─── DOM refs ─────────────────────────────────────────────────
 const DOM = {
@@ -245,7 +242,7 @@ function renderWord(entry) {
     : "'EB Garamond', serif";
 
   DOM.wordTitle.textContent  = entry.word;
-  DOM.wordDef.textContent    = entry.def;
+  DOM.wordDef.textContent    = entry.def || '...';
 
   if (state.showEtymology && entry.origin) {
     DOM.wordOrigin.textContent = '— ' + entry.origin;
@@ -290,11 +287,40 @@ function transition(fn) {
 }
 
 // ─── Show word by index ────────────────────────────────────────
-function showWord(index) {
+async function showWord(index) {
   const words = state.filteredWords;
   if (!words.length) return;
+
   state.currentIndex = ((index % words.length) + words.length) % words.length;
-  renderWord(words[state.currentIndex]);
+  const currentEntry = words[state.currentIndex];
+
+  // If word is just a string (from 100k index), fetch definition
+  if (typeof currentEntry === 'string' || !currentEntry.def) {
+    DOM.wordCard.classList.add('is-loading');
+    const wordKey = typeof currentEntry === 'string' ? currentEntry : currentEntry.word;
+    
+    // Preliminary render title
+    DOM.wordTitle.textContent = wordKey;
+    DOM.wordDef.textContent = 'Шукаємо тлумачення...';
+    DOM.wordOrigin.textContent = '';
+
+    const data = await fetchWiktionaryWord(wordKey);
+    DOM.wordCard.classList.remove('is-loading');
+    
+    if (data) {
+      if (typeof words[state.currentIndex] === 'string') {
+        words[state.currentIndex] = data; // Cache it
+      } else {
+        Object.assign(words[state.currentIndex], data);
+      }
+      renderWord(data);
+    } else {
+      renderWord({ word: wordKey, origin: 'Архів', def: '...' });
+    }
+  } else {
+    renderWord(currentEntry);
+  }
+  
   resetProgress();
 }
 
@@ -335,7 +361,8 @@ function resetProgress() {
 function startAuto() {
   state.autoMode = true;
   DOM.btnAuto.classList.add('active');
-  DOM.btnAuto.querySelector('.btn-icon').textContent = '◉';
+  const btnIcon = DOM.btnAuto.querySelector('.btn-icon');
+  if (btnIcon) btnIcon.textContent = '◉';
   resetProgress();
   state.autoInterval = setInterval(() => nextWord(), state.autoDelay * 1000);
 }
@@ -343,7 +370,8 @@ function startAuto() {
 function stopAuto() {
   state.autoMode = false;
   DOM.btnAuto.classList.remove('active');
-  DOM.btnAuto.querySelector('.btn-icon').textContent = '◉';
+  const btnIcon = DOM.btnAuto.querySelector('.btn-icon');
+  if (btnIcon) btnIcon.textContent = '◉';
   DOM.progressBar.style.width = '0%';
   DOM.progressBar.style.transition = 'none';
   clearInterval(state.autoInterval);
@@ -358,45 +386,79 @@ function toggleAuto() {
 async function fetchWiktionaryWord(queryWord) {
   try {
     const url = `https://uk.wiktionary.org/w/api.php?action=query&titles=${encodeURIComponent(queryWord)}&prop=extracts&exintro=1&explaintext=1&format=json&origin=*`;
-    const res  = await fetch(url, { signal: AbortSignal.timeout(4000) });
+    const res  = await fetch(url);
     const data = await res.json();
     const pages = data.query.pages;
     const page  = Object.values(pages)[0];
+    
     if (page.missing || !page.extract) return null;
+    
     const raw = page.extract.trim();
-    const first = raw.split('\n').filter(l => l.trim().length > 10)[0] || raw.slice(0, 180);
-    return { word: queryWord, origin: 'Вікісловник', def: first.slice(0, 220), cat: 'all' };
-  } catch { return null; }
+    // Simple cleaning of Wiktionary extract
+    const cleanDef = raw.split('\n').filter(l => l.trim().length > 5 && !l.includes('=='))[0] || raw;
+    
+    return { 
+      word: queryWord, 
+      origin: 'Вікісловник', 
+      def: cleanDef.slice(0, 350).replace(/\[.*?\]/g, '').trim() + (cleanDef.length > 350 ? '...' : ''), 
+      cat: 'all' 
+    };
+  } catch (err) { 
+    console.error('Wiktionary error:', err);
+    return null; 
+  }
 }
 
-async function loadWiktionaryWords() {
-  const shuffled = [...WIKTIONARY_SEED_WORDS].sort(() => Math.random() - 0.5).slice(0, 8);
-  const results  = await Promise.all(shuffled.map(w => fetchWiktionaryWord(w)));
-  return results.filter(Boolean);
+// ─── Large Wordlist Fetching ──────────────────────────────────
+async function fetchLargeWordlist() {
+  try {
+    const response = await fetch(GLOBAL_WORDLIST_URL);
+    const text = await response.text();
+    // Format is "word frequency\n"
+    const allWords = text.split('\n')
+      .map(line => line.split(' ')[0].trim()) // Take the word part
+      .filter(w => w.length > 3 && w.length < 20 && !/[a-zA-Z0-9]/.test(w));
+    
+    state.fullIndex = allWords;
+    console.log(`Loaded ${state.fullIndex.length} words into index.`);
+    
+    // Immediate rebuild if we are in "All" mode
+    if (state.activeSource !== 'curated') {
+      rebuildWordList();
+    }
+  } catch (err) {
+    console.warn('Could not load global wordlist. Falling back to curated words.', err);
+  }
 }
 
 // ─── Filter / rebuild word list ────────────────────────────────
 function rebuildWordList() {
   let pool = [];
 
-  if (state.activeSource === 'curated' || state.activeSource === 'all') {
+  if (state.activeSource === 'curated') {
     pool = [...CURATED_WORDS];
+  } else if (state.activeSource === 'wiktionary') {
+    // Pick a random selection from the 100k index to keep performance high
+    // or just use the full index if browsing experience should be infinite
+    pool = state.fullIndex.length ? [...state.fullIndex] : [...CURATED_WORDS];
+  } else {
+    pool = [...CURATED_WORDS, ...state.fullIndex];
   }
 
-  if (state.activeSource === 'wiktionary' || state.activeSource === 'all') {
-    pool = [...pool, ...(state.wiktionaryWords || [])];
-  }
-
-  if (state.activeCategory !== 'all') {
+  if (state.activeCategory !== 'all' && state.activeSource === 'curated') {
     pool = pool.filter(w => w.cat === state.activeCategory);
   }
 
-  if (!pool.length) pool = [...CURATED_WORDS]; // fallback
+  if (!pool.length) pool = [...CURATED_WORDS];
 
-  // Shuffle
-  state.filteredWords = pool.sort(() => Math.random() - 0.5);
-  state.currentIndex  = 0;
-  showWord(0);
+  // For very large pools, we don't shuffle the whole thing (to save memory)
+  // Instead we just randomize the current index access or shuffle a subset
+  
+  state.filteredWords = pool; // In "infinite" mode, we just keep it
+  
+  // Reset index to a random starting point
+  state.currentIndex = Math.floor(Math.random() * pool.length);
+  showWord(state.currentIndex);
 }
 
 // ─── Settings panel ───────────────────────────────────────────
@@ -526,7 +588,7 @@ async function init() {
   // Toggles
   DOM.toggleEtym.addEventListener('change', () => {
     state.showEtymology = DOM.toggleEtym.checked;
-    renderWord(state.filteredWords[state.currentIndex]);
+    showWord(state.currentIndex);
   });
 
   DOM.toggleFont.addEventListener('change', () => {
@@ -536,15 +598,13 @@ async function init() {
   initFilterButtons();
   initInteractions();
 
-  // Shuffle and show first word
-  state.filteredWords = [...CURATED_WORDS].sort(() => Math.random() - 0.5);
-  state.currentIndex  = 0;
-  renderWord(state.filteredWords[0]);
+  // Initial render
+  state.filteredWords = [...CURATED_WORDS];
+  state.currentIndex  = Math.floor(Math.random() * CURATED_WORDS.length);
+  showWord(state.currentIndex);
 
-  // Load Wiktionary words in background
-  loadWiktionaryWords().then(words => {
-    state.wiktionaryWords = words;
-  }).catch(() => {});
+  // Load the 200,000 words index in background
+  fetchLargeWordlist();
 }
 
 document.addEventListener('DOMContentLoaded', init);
