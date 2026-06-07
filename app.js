@@ -1,5 +1,5 @@
 /* ============================================================
-   RAFALSKY DICTIONARY — ULTRA FAST HYBRID MODE
+   RAFALSKY DICTIONARY — FLICKER-FREE HYBRID MODE
    ============================================================ */
 
 'use strict';
@@ -20,46 +20,19 @@ const CALLIGRAPHIC_FONTS = [
   { name: 'EB Garamond',        style: "'EB Garamond', serif",                italic: true  },
 ];
 
-// HIGH-QUALITY CURATED BASE (INSTANT)
 const BASE_WORDS = [
   { word: 'Аура', origin: 'грецьк.', def: 'Невидима оболонка, що нібито оточує людське тіло або інший живий об’єкт.' },
-  { word: 'Бар бар', origin: 'ісланд.', def: 'Слово, що імітує незрозумілу мову іноземців, звідси — варвари.' },
   { word: 'Харизма', origin: 'грецьк.', def: 'Особливий дар, виняткові якості особистості, що дозволяють вести за собою інших.' },
-  { word: 'Ейфорія', origin: 'грецьк.', def: ' Стан піднесення, задоволення, який не завжди відповідає об’єктивним обставинам.' },
+  { word: 'Ейфорія', origin: 'грецьк.', def: ' Стан піднесення, задоволення, який не відповідає об’єктивним обставинам.' },
   { word: 'Ностальгія', origin: 'грецьк.', def: 'Туга за батьківщиною, минулим або чимось далеким і недосяжним.' },
   { word: 'Емпатія', origin: 'грецьк.', def: 'Здатність розуміти емоції іншої людини та співпереживати їй.' },
   { word: 'Лабіринт', origin: 'грецьк.', def: 'Складна споруда або ситуація, з якої важко знайти вихід.' },
   { word: 'Утопія', origin: 'грецьк.', def: ' Ідеальне суспільство, яке неможливо втілити в реальності; нездійсненна мрія.' },
-  { word: 'Аскетизм', origin: 'грецьк.', def: 'Спосіб життя, що характеризується відмовою від життєвих благ і задоволень.' },
   { word: 'Метафора', origin: 'грецьк.', def: 'Перенесення назви з одного предмета на інший на основі їх схожості.' },
-  { word: 'Генеза', origin: 'грецьк.', def: 'Походження, процес зародження та розвитку чого-небудь.' },
-  { word: 'Динаміка', origin: 'грецьк.', def: 'Хід розвитку, зміна будь-якого явища під впливом внутрішніх чи зовнішніх сил.' },
-  { word: 'Космос', origin: 'грецьк.', def: 'Всесвіт як впорядкована і гармонійна система.' },
-  { word: 'Ефір', origin: 'грецьк.', def: 'Верхній шар повітря; у переносному значенні — радіо або телепростір.' },
-  { word: 'Олігархія', origin: 'грецьк.', def: 'Влада небагатьох, зазвичай найбагатших верств суспільства.' },
-  { word: 'Парадокс', origin: 'грецьк.', def: 'Думка, що суперечить загальноприйнятим поглядам або здоровому глузду.' },
-  { word: 'Риторика', origin: 'грецьк.', def: 'Мистецтво красномовства; теорія ораторського мистецтва.' },
-  { word: 'Символ', origin: 'грецьк.', def: 'Предмет або слово, що умовно виражає сутність певного явища.' },
-  { word: 'Теорія', origin: 'грецьк.', def: 'Система ідей або принципів, що пояснюють певні явища.' },
-  { word: 'Фаталізм', origin: 'латин.', def: 'Віра у неминучість долі, рок, передвизначення подій.' },
-  { word: 'Ілюзія', origin: 'латин.', def: 'Хибне сприйняття реальності, викривлене відображення дійсності.' },
-  { word: 'Інтуїція', origin: 'латин.', def: 'Здатність осягати істину безпосередньо, без усвідомлених логічних міркувань.' },
-  { word: 'Культура', origin: 'латин.', def: 'Сукупність матеріальних та духовних цінностей, створених людством.' },
-  { word: 'Максиму", origin: "латин.', def: 'Кратке висловлювання морального чи професійного характеру.' },
-  { word: 'Нігілізм', origin: 'латин.', def: 'Заперечення загальноприйнятих цінностей, ідеалів та моральних норм.' },
-  { word: 'Об’єкт', origin: 'латин.', def: 'Предмет, на який спрямована пізнавальна чи інша діяльність.' },
-  { word: 'Статус', origin: 'латин.', def: 'Становище людини або групи в суспільстві; стан справ.' },
   { word: 'Енергія', origin: 'грецьк.', def: 'Здатність тіла виконувати роботу; внутрішня сила.' },
-  { word: 'Хаос', origin: 'грецьк.', def: 'Первісний безладний стан Всесвіту; повна відсутність порядку.' },
-  { word: 'Шанс', origin: 'франц.', def: 'Можливість успіху, ймовірність здійснення чого-небудь.' },
   { word: 'Шедевр', origin: 'франц.', def: 'Видатний твір мистецтва, вершина майстерності.' },
-  { word: 'Екстрим', origin: 'англ.', def: 'Дії, пов’язані з великим ризиком для життя або здоров’я.' },
-  { word: 'Стрес', origin: 'англ.', def: 'Стан напруження організму, що виникає під дією сильних подразників.' },
-  { word: 'Стимул', origin: 'латин.', def: 'Спонукальна причина, привід до дії (спочатку — палиця для погоничів).' },
-  { word: 'Гармонія', origin: 'грецьк.', def: 'Співзвуччя, злагодженість елементів у цілому.' },
-  { word: 'Діалог', origin: 'грецьк.', def: 'Розмова між двома або кількома особами.' },
-  { word: 'Криза', origin: 'грецьк.', def: 'Різкий переломний момент; тяжке становище.' },
-  { word: 'Система', origin: 'грецьк.', def: 'Ціле, складене з частин; певний порядок у розташуванні елементів.' },
+  { word: 'Абстракція', origin: 'латин.', def: 'Процес відволікання від конкретних властивостей предмета для виявлення суті.' },
+  { word: 'Квант', origin: 'латин.', def: 'Мінімальна частка енергії, яку може поглинути або випромінити атом.' }
 ];
 
 const state = {
@@ -71,9 +44,10 @@ const state = {
   animType: 'fade',
   fixedFont: false,
   lastFontIndex: -1,
-  isAnimating: false,
-  isFetching: false
+  isAnimating: false
 };
+
+const SEED_URL = 'https://raw.githubusercontent.com/hermitdave/FrequencyWords/master/content/2018/uk/uk_50k.txt';
 
 const DOM = {
   wordTitle: document.getElementById('word-title'),
@@ -126,18 +100,29 @@ function renderWord(entry) {
   DOM.wordTitle.textContent = entry.word;
   DOM.wordDef.textContent = entry.def || '...';
   DOM.wordOrigin.textContent = entry.origin ? '— ' + entry.origin : '— Архів';
-  DOM.wordCounter.textContent = 'Словник іншомовних слів'; // No counters as per minimalist request
+  DOM.wordCounter.textContent = 'Словник іншомовних слів';
 }
 
-function transition(fn) {
+// ASYNC TRANSITION: waits for data before fading in
+async function transition(fn) {
   if (state.isAnimating) return;
   state.isAnimating = true;
+
   DOM.wordCard.classList.add('anim-exit-fade');
-  setTimeout(() => {
-    fn();
-    DOM.wordCard.classList.remove('anim-exit-fade'); DOM.wordCard.classList.add('anim-enter-fade');
-    DOM.wordCard.addEventListener('animationend', () => { DOM.wordCard.classList.remove('anim-enter-fade'); state.isAnimating = false; }, { once: true });
-  }, 250);
+  
+  // Wait for both: the exit animation AND the data fetching
+  const [data] = await Promise.all([
+    fn(),
+    new Promise(r => setTimeout(r, 300))
+  ]);
+
+  DOM.wordCard.classList.remove('anim-exit-fade');
+  DOM.wordCard.classList.add('anim-enter-fade');
+  
+  DOM.wordCard.addEventListener('animationend', () => {
+    DOM.wordCard.classList.remove('anim-enter-fade');
+    state.isAnimating = false;
+  }, { once: true });
 }
 
 async function fetchWiktionary(word) {
@@ -158,15 +143,13 @@ async function showWord(idx) {
   const entry = state.words[state.currentIndex];
   
   if (typeof entry === 'string') {
-    DOM.wordCard.classList.add('is-loading');
-    DOM.wordTitle.textContent = entry;
     const data = await fetchWiktionary(entry);
-    DOM.wordCard.classList.remove('is-loading');
     if (data) {
       state.words[state.currentIndex] = data;
       renderWord(data);
     } else {
-      showWord(Math.floor(Math.random() * state.words.length));
+      // Fallback: silently try another random word if current fails
+      return showWord(Math.floor(Math.random() * state.words.length));
     }
   } else {
     renderWord(entry);
@@ -192,27 +175,28 @@ function toggleAuto() { state.autoMode = !state.autoMode; DOM.btnAuto.classList.
 
 async function init() {
   initParticles();
+  
+  document.querySelector('.word-stage').onclick = (e) => {
+    if (!e.target.closest('button') && !e.target.closest('.settings-panel')) nextWord();
+  };
+
   DOM.btnRandom.onclick = (e) => { e.stopPropagation(); randomWord(); };
   DOM.btnAuto.onclick = (e) => { e.stopPropagation(); toggleAuto(); };
   DOM.btnSettings.onclick = (e) => { e.stopPropagation(); toggleSettings(); };
-  
+
   DOM.intervalRange.oninput = () => { state.autoDelay = parseInt(DOM.intervalRange.value); DOM.intervalVal.textContent = state.autoDelay + 'с'; if (state.autoMode) resetProgress(); };
   DOM.toggleFont.onchange = () => { state.fixedFont = DOM.toggleFont.checked; };
   
-  document.querySelector('.word-stage').onclick = (e) => {
-    if (!e.target.closest('button') && !e.target.closest('.settings-panel')) {
-      nextWord();
-    }
-  };
-  
+  document.querySelectorAll('[data-size]').forEach(btn => btn.onclick = () => {
+    document.querySelectorAll('[data-size]').forEach(b => b.classList.remove('active')); btn.classList.add('active');
+    document.body.className = 'size-' + btn.dataset.size;
+  });
+
   document.onkeydown = (e) => { if (e.key === 'ArrowRight' || e.key === ' ') nextWord(); if (e.key === 'ArrowLeft') prevWord(); };
-  
-  // INITIAL SHOW
   renderWord(state.words[0]);
 
-  // LOAD BIG SEED LIST IN BACKGROUND FOR INFINITE SCROLL
   try {
-    const res = await fetch('https://raw.githubusercontent.com/hermitdave/FrequencyWords/master/content/2018/uk/uk_50k.txt');
+    const res = await fetch(SEED_URL);
     const txt = await res.text();
     const extra = txt.split('\n')
       .map(l => l.split(' ')[0].trim())
