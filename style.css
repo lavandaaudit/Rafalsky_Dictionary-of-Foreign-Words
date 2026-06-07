@@ -1,0 +1,530 @@
+/* ============================================================
+   RAFALSKY DICTIONARY — STYLE SHEET
+   Black luxury calligraphy dictionary
+   ============================================================ */
+
+/* --- Reset & Base --- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --gold:       #c8a96e;
+  --gold-dim:   #8a6f3e;
+  --gold-glow:  rgba(200,169,110,0.18);
+  --white:      #f0ead8;
+  --white-dim:  rgba(240,234,216,0.55);
+  --bg:         #080808;
+  --bg2:        #0f0f0f;
+  --border:     rgba(200,169,110,0.22);
+  --anim-speed: 800ms;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  position: relative;
+  font-family: 'EB Garamond', Georgia, serif;
+}
+
+/* ============================================================
+   PARTICLE CANVAS
+   ============================================================ */
+#particle-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.45;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.site-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 32px 14px;
+  background: linear-gradient(to bottom, rgba(8,8,8,0.97) 60%, transparent);
+  border-bottom: 1px solid var(--border);
+  gap: 16px;
+}
+
+/* Logo */
+.logo-block {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.logo-icon svg { display: block; flex-shrink: 0; }
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+  gap: 0;
+}
+
+.logo-line1,
+.logo-line2,
+.logo-line3 {
+  font-family: 'Bebas Neue', sans-serif;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  display: block;
+  line-height: 1.05;
+}
+.logo-line1 { font-size: clamp(18px, 2.5vw, 28px); }
+.logo-line2 { font-size: clamp(10px, 1.5vw, 15px); opacity: 0.7; }
+.logo-line3 { font-size: clamp(9px, 1.2vw, 13px); opacity: 0.5; letter-spacing: 0.2em; }
+
+/* Header controls */
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ctrl-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--gold);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background 0.25s, border-color 0.25s, color 0.25s, box-shadow 0.25s;
+  white-space: nowrap;
+}
+
+.ctrl-btn:hover {
+  background: var(--gold-glow);
+  border-color: var(--gold);
+  box-shadow: 0 0 14px var(--gold-glow);
+}
+
+.ctrl-btn.active {
+  background: var(--gold);
+  color: #080808;
+  border-color: var(--gold);
+}
+
+.ctrl-btn--icon { padding: 8px 12px; }
+
+.btn-icon { font-size: 16px; line-height: 1; }
+.btn-label { font-size: 13px; }
+
+/* ============================================================
+   SETTINGS PANEL
+   ============================================================ */
+.settings-panel {
+  position: fixed;
+  top: 72px; right: 24px;
+  z-index: 200;
+  width: clamp(280px, 90vw, 360px);
+  background: rgba(12,12,12,0.97);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.8), 0 0 40px var(--gold-glow);
+  transform-origin: top right;
+  transform: scale(0.92) translateY(-8px);
+  opacity: 0;
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.settings-panel.visible {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  pointer-events: all;
+}
+
+.settings-panel.hidden { display: none; }
+.settings-panel.open { display: block; }
+
+.settings-inner { padding: 24px 22px 20px; }
+
+.settings-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.setting-group {
+  margin-bottom: 18px;
+}
+
+.setting-label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 8px;
+  font-family: 'Bebas Neue', sans-serif;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.setting-row--buttons {
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.filter-btn {
+  padding: 5px 12px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--white-dim);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  border-radius: 2px;
+  font-family: 'EB Garamond', serif;
+  transition: all 0.2s;
+}
+
+.filter-btn.active {
+  background: var(--gold-glow);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.filter-btn:hover:not(.active) {
+  border-color: var(--gold-dim);
+  color: var(--white);
+}
+
+.range-input {
+  flex: 1;
+  accent-color: var(--gold);
+  cursor: pointer;
+}
+
+.range-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 14px;
+  color: var(--gold);
+  min-width: 28px;
+  text-align: right;
+}
+
+/* Toggle */
+.toggle {
+  position: relative;
+  width: 42px; height: 22px;
+  cursor: pointer;
+  display: block;
+}
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: #222;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  transition: 0.3s;
+}
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  left: 3px; top: 3px;
+  width: 14px; height: 14px;
+  background: var(--gold-dim);
+  border-radius: 50%;
+  transition: 0.3s;
+}
+.toggle input:checked + .toggle-slider { background: rgba(200,169,110,0.15); border-color: var(--gold); }
+.toggle input:checked + .toggle-slider::before { transform: translateX(20px); background: var(--gold); }
+
+/* ============================================================
+   MAIN WORD STAGE
+   ============================================================ */
+.word-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 24px 80px;
+  min-height: 100dvh;
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.word-card {
+  max-width: 820px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  padding: 40px;
+  transition: opacity var(--anim-speed) ease, transform var(--anim-speed) ease, filter var(--anim-speed) ease;
+}
+
+/* Decorative top ornament */
+.word-card::before {
+  content: '✦ ✦ ✦';
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.6em;
+  color: var(--gold-dim);
+  margin-bottom: 30px;
+  opacity: 0.6;
+}
+
+/* Decorative bottom ornament */
+.word-card::after {
+  content: '— ◆ —';
+  display: block;
+  font-size: 12px;
+  letter-spacing: 0.4em;
+  color: var(--gold-dim);
+  margin-top: 36px;
+  opacity: 0.4;
+}
+
+/* Origin tag */
+.word-origin {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: clamp(12px, 1.5vw, 15px);
+  color: var(--gold-dim);
+  letter-spacing: 0.25em;
+  margin-bottom: 16px;
+  min-height: 1.4em;
+  transition: opacity 0.4s;
+}
+
+/* Word title — font changes per word */
+.word-title {
+  font-size: clamp(42px, 9vw, 100px);
+  line-height: 1.05;
+  color: var(--white);
+  margin-bottom: 28px;
+  text-shadow: 0 0 60px rgba(200,169,110,0.12);
+  letter-spacing: 0.02em;
+  /* font-family set dynamically */
+}
+
+/* Definition */
+.word-definition {
+  font-size: clamp(16px, 2.2vw, 22px);
+  line-height: 1.7;
+  color: var(--white-dim);
+  max-width: 680px;
+  margin: 0 auto;
+  font-style: italic;
+  /* font-family set dynamically */
+}
+
+/* Word meta: counter + progress */
+.word-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 40px;
+}
+
+.word-counter {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  color: var(--gold-dim);
+  opacity: 0.6;
+}
+
+.progress-bar-wrap {
+  width: 120px;
+  height: 1px;
+  background: rgba(200,169,110,0.15);
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  width: 0%;
+  transition: width linear;
+}
+
+/* Nav hints */
+.nav-hints {
+  position: fixed;
+  bottom: 54px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: rgba(200,169,110,0.25);
+  font-family: 'Bebas Neue', sans-serif;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ============================================================
+   ANIMATION CLASSES
+   ============================================================ */
+.word-card.anim-exit-fade {
+  opacity: 0;
+  transform: translateY(12px);
+  filter: blur(4px);
+}
+.word-card.anim-enter-fade {
+  animation: enterFade var(--anim-speed) ease forwards;
+}
+@keyframes enterFade {
+  from { opacity: 0; transform: translateY(-12px); filter: blur(4px); }
+  to   { opacity: 1; transform: translateY(0);     filter: blur(0px); }
+}
+
+.word-card.anim-exit-slide {
+  opacity: 0;
+  transform: translateX(60px);
+}
+.word-card.anim-enter-slide {
+  animation: enterSlide var(--anim-speed) cubic-bezier(0.25,1,0.5,1) forwards;
+}
+@keyframes enterSlide {
+  from { opacity: 0; transform: translateX(-60px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.word-card.anim-exit-blur {
+  opacity: 0;
+  filter: blur(20px) brightness(2);
+  transform: scale(0.96);
+}
+.word-card.anim-enter-blur {
+  animation: enterBlur var(--anim-speed) ease forwards;
+}
+@keyframes enterBlur {
+  from { opacity: 0; filter: blur(20px) brightness(2); transform: scale(1.04); }
+  to   { opacity: 1; filter: blur(0) brightness(1);   transform: scale(1); }
+}
+
+/* Size modifiers */
+body.size-sm .word-title       { font-size: clamp(30px, 5.5vw, 60px); }
+body.size-sm .word-definition  { font-size: clamp(14px, 1.8vw, 18px); }
+body.size-lg .word-title       { font-size: clamp(56px, 12vw, 130px); }
+body.size-lg .word-definition  { font-size: clamp(18px, 2.8vw, 28px); }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.site-footer {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 32px;
+  background: linear-gradient(to top, rgba(8,8,8,0.97) 60%, transparent);
+  border-top: 1px solid var(--border);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: rgba(200,169,110,0.3);
+  font-family: 'Bebas Neue', sans-serif;
+}
+
+.footer-link {
+  color: rgba(200,169,110,0.35);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-link:hover { color: var(--gold); }
+
+/* ============================================================
+   MOBILE RESPONSIVE
+   ============================================================ */
+@media (max-width: 640px) {
+  .site-header {
+    padding: 14px 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .logo-icon { display: none; }
+
+  .logo-line1 { font-size: 22px; }
+  .logo-line2 { font-size: 11px; }
+  .logo-line3 { font-size: 10px; }
+
+  .header-controls { gap: 7px; }
+
+  .ctrl-btn { padding: 7px 10px; }
+  .btn-label { display: none; }
+
+  .word-stage {
+    padding: 88px 16px 70px;
+  }
+
+  .word-card { padding: 20px 10px; }
+
+  .word-card::before { margin-bottom: 16px; }
+  .word-card::after  { margin-top: 24px; }
+
+  .word-origin { margin-bottom: 10px; }
+
+  .nav-hints { font-size: 10px; gap: 6px; bottom: 44px; }
+
+  .settings-panel {
+    top: 0; right: 0; left: 0;
+    width: 100%;
+    border-radius: 0;
+    transform-origin: top center;
+    max-height: 90dvh;
+    overflow-y: auto;
+  }
+
+  .site-footer { padding: 8px 16px; }
+}
+
+@media (max-width: 380px) {
+  .word-card::before,
+  .word-card::after { display: none; }
+}
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+
+/* ============================================================
+   SELECTION
+   ============================================================ */
+::selection { background: var(--gold-glow); color: var(--gold); }
